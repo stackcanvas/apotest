@@ -54,7 +54,7 @@ const IntroSection = () => {
             {currentIndex === 0 && (
               <Tween
                 from={{ x: "100%" }}
-                to={{ x: "200", duration: 0.5 }}
+                to={{ x: "200", duration: 0.4 }}
                 repeat={1}
                 repeatDelay={2}
                 delay={1}
@@ -99,7 +99,7 @@ const IntroSection = () => {
           {currentIndex === 1 && (
             <Tween
               from={{ y: "100%" }}
-              to={{ y: "0", duration: 0.5 }}
+              to={{ y: "0", duration: 0.4 }}
               repeat={1}
               repeatDelay={2}
               delay={1}
@@ -143,7 +143,7 @@ const IntroSection = () => {
           {currentIndex === 2 && (
             <Tween
               from={{ x: "100%" }}
-              to={{ x: "0", duration: 0.5 }}
+              to={{ x: "0", duration: 0.4 }}
               repeat={1}
               repeatDelay={2}
               delay={1}
