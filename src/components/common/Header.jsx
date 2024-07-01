@@ -2,9 +2,13 @@ import Image from "next/image";
 import MainMenu from "./partials/MainMenu";
 import { useEffect, useRef } from "react";
 import MobileMenu from "./partials/MobileMenu";
+import { usePathname } from "next/navigation";
+import { ShoppingCartOutlined } from "@ant-design/icons";
+import ALink from "../features/ALink";
 
 const Header = () => {
   const headerRef = useRef(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -25,19 +29,39 @@ const Header = () => {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-20 bg-transparent py-4 lg:py-0"
+      className={`z-20 bg-transparent ${
+        pathname === "/" ? "fixed top-0 left-0 right-0 py-4 lg:py-0" : "py-4"
+      }`}
       ref={headerRef}
     >
       <div className="header-middle">
         <div className="container flex items-center justify-between">
           <div className="header-left">
-            <Image src="/images/logo.png" width={150} height={50} alt="Logo" />
+            <ALink href={"/"}>
+              <Image
+                src="/images/logo.png"
+                width={150}
+                height={50}
+                alt="Logo"
+              />
+            </ALink>
           </div>
 
           <div className="header-right">
-            <MainMenu />
+            {pathname?.includes("/orders/") ? (
+              <>
+                <div className="flex items-center space-x-4">
+                  <span>Fortryd bestilling</span>
+                  <ShoppingCartOutlined className="text-2xl" />
+                </div>
+              </>
+            ) : (
+              <>
+                <MainMenu />
 
-            <MobileMenu />
+                <MobileMenu />
+              </>
+            )}
           </div>
         </div>
       </div>

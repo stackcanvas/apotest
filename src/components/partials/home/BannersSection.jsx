@@ -1,3 +1,4 @@
+import ALink from "@/components/features/ALink";
 import { Button } from "antd";
 import Image from "next/image";
 
@@ -26,12 +27,14 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <Button
-                size="large"
-                className="block bg-red-400 border-red-400 mb-4 w-full"
-              >
-                køb
-              </Button>
+              <ALink href={"/orders/order-1"}>
+                <Button
+                  size="large"
+                  className="block bg-red-400 border-red-400 mb-4 w-full"
+                >
+                  køb
+                </Button>
+              </ALink>
 
               <Button
                 size="large"
@@ -65,12 +68,14 @@ const BannersSection = () => {
                 p-piller.
               </p>
 
-              <Button
-                size="large"
-                className="block mb-4 w-full bg-[#E67F86] border-[#E67F86]"
-              >
-                Forny recept
-              </Button>
+              <ALink href={"/orders/order-2"}>
+                <Button
+                  size="large"
+                  className="block mb-4 w-full bg-[#E67F86] border-[#E67F86]"
+                >
+                  køb
+                </Button>
+              </ALink>
 
               <Button
                 size="large"
@@ -103,12 +108,14 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <Button
-                size="large"
-                className="block bg-[#0AB0D9] border-[#0AB0D9] mb-4 w-full"
-              >
-                køb
-              </Button>
+              <ALink href={"/orders/order-3"}>
+                <Button
+                  size="large"
+                  className="block bg-[#0AB0D9] border-[#0AB0D9] mb-4 w-full"
+                >
+                  køb
+                </Button>
+              </ALink>
 
               <Button
                 size="large"
@@ -141,12 +148,14 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <Button
-                size="large"
-                className="block bg-[#F3AE57] border-[#F3AE57] mb-4 w-full"
-              >
-                køb
-              </Button>
+              <ALink href={"/orders/order-4"}>
+                <Button
+                  size="large"
+                  className="block bg-[#F3AE57] border-[#F3AE57] mb-4 w-full"
+                >
+                  køb
+                </Button>
+              </ALink>
 
               <Button
                 size="large"
@@ -179,12 +188,14 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <Button
-                size="large"
-                className="block bg-[#A7A7A5] border-[#A7A7A5] mb-4 w-full"
-              >
-                køb
-              </Button>
+              <ALink href={"/orders/order-5"}>
+                <Button
+                  size="large"
+                  className="block bg-[#A7A7A5] border-[#A7A7A5] mb-4 w-full"
+                >
+                  køb
+                </Button>
+              </ALink>
 
               <Button
                 size="large"
