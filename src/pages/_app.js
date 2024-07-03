@@ -8,6 +8,8 @@ import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import "swiper/css/effect-fade";
 
+import "react-credit-cards/es/styles-compiled.css";
+
 // Import Global Styles
 import "@/styles/globals.scss";
 import { ConfigProvider } from "antd";
