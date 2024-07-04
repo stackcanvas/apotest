@@ -1,7 +1,7 @@
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CardNumberElement,
   CardExpiryElement,
@@ -11,6 +11,8 @@ import {
 } from "@stripe/react-stripe-js";
 import Loading from "@/components/features/Loading";
 import { toast } from "react-toastify";
+import { getSingleService } from "@/lib/strapi";
+import axios from "axios";
 
 const style = {
   iconStyle: "solid",
@@ -33,10 +35,40 @@ const style = {
 
 const OrderPage = () => {
   const slug = useRouter().query.slug;
+  const [service, setService] = useState();
   const [loading, setLoading] = useState(false);
+  const [billingDetails, setBillingDetails] = useState();
   const [step, setStep] = useState("0");
+  const [customerName, setCustomerName] = useState("");
 
-  const onFinish = async (values) => {
+  const consultationFee = 99;
+  const shipmentFee = 25;
+
+  const urlParamsObject = {
+    populate: {
+      media: {
+        populate: "*",
+      },
+    },
+  };
+
+  useEffect(() => {
+    if (slug) {
+      const getSingleProductFunc = async (slug) => {
+        const data = await getSingleService(
+          `services?filters[slug][$eq]=${slug}`,
+          urlParamsObject
+        );
+
+        setService(data[0]?.attributes);
+      };
+
+      getSingleProductFunc(slug);
+    }
+  }, [slug]);
+
+  const onFinish = (values) => {
+    setBillingDetails(values);
     setStep(step.concat("1"));
   };
 
@@ -66,51 +98,130 @@ const OrderPage = () => {
       return;
     }
 
-    const card = elements.getElement(CardNumberElement);
-
     try {
-      const { error, token } = await stripe.createToken(card);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
+        },
+        body: JSON.stringify({
+          data: {
+            title: service.title,
+            slug: service.slug,
+            totalPrice: (service.price + consultationFee + shipmentFee).toFixed(
+              2
+            ),
+            orderStartDate: new Date(),
+            shippingInfo: {
+              zipCode: billingDetails.zipCode,
+              firstName: billingDetails.firstName,
+              lastName: billingDetails.lastName,
+              address: billingDetails.address,
+              address2: billingDetails.address2,
+              email: billingDetails.email,
+            },
+          },
+        }),
+      });
 
-      if (error) {
-        console.log("[error]", error);
-        setError(error.message);
+      if (res?.ok) {
+        const card = elements.getElement(CardNumberElement);
 
-        toast.error("Payment Failed!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        try {
+          const { error, token } = await stripe.createToken(card);
+
+          if (error) {
+            console.log("[error]", error);
+            setError(error.message);
+
+            toast.error("Payment Failed!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          } else {
+            console.log("[token]", token);
+            setError(null);
+
+            try {
+              // Send the Stripe token and the payment amount to the server-side
+              const response = await axios.post("/api/charge", {
+                stripeToken: token.id,
+                amount: service.price + consultationFee + shipmentFee, // Amount in the smallest currency unit (e.g., cents for USD)
+                billingDetails: { ...billingDetails, fullName: customerName },
+              });
+
+              console.log("Payment successful:", response.data);
+
+              toast.success("Payment Success!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+
+              setTimeout(() => {
+                setLoading(false);
+                setStep(step.concat("2"));
+              }, 1000);
+            } catch (error) {
+              console.error("Payment failed:", error);
+
+              toast.warn("Amount must convert to at least 50 cents", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+
+              setTimeout(() => {
+                setLoading(false);
+              }, 1000);
+            }
+          }
+        } catch (error) {
+          console.error(error, "Server Error");
+
+          toast.error("Stripe Server Error!", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
+        }
       } else {
-        console.log("[token]", token);
-        setError(null);
-
-        toast.success("Payment Success!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
-
-      setTimeout(() => {
-        setLoading(false);
-        setStep(step.concat("2"));
-      }, 1000);
     } catch (error) {
       console.error(error, "Server Error");
 
-      toast.error("Server Error!", {
+      toast.error("CMS Error!", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -368,6 +479,22 @@ const OrderPage = () => {
                     <div className="grid grid-flex-row grid-cols-12 gap-5">
                       <div className="col-span-12 lg:col-span-6">
                         <div className="flex items-center mb-5">
+                          <h3 className="w-[160px]">Navn</h3>
+
+                          <div className="flex items-center flex-1 border h-[47px] rounded-lg focus:border-primary transition-all overflow-hidden">
+                            <input
+                              defaultValue={
+                                billingDetails?.firstName +
+                                " " +
+                                billingDetails?.lastName
+                              }
+                              onChange={(e) => setCustomerName(e.target.value)}
+                              className="form-control w-full h-full px-3 border-none outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center mb-5">
                           <h3 className="w-[160px]">Kortnummer</h3>
 
                           <div className="flex items-center flex-1 border h-[47px] rounded-lg focus:border-primary transition-all">
@@ -406,7 +533,13 @@ const OrderPage = () => {
                         <div>{error}</div>
 
                         <h3 className="font-medium text-lg mt-10">
-                          Total beløb: 223,00 kr.
+                          Total beløb:{" "}
+                          {(
+                            service.price +
+                            consultationFee +
+                            shipmentFee
+                          ).toFixed(2)}{" "}
+                          kr.
                         </h3>
                       </div>
 
@@ -419,23 +552,30 @@ const OrderPage = () => {
                           <ul className="text-lg">
                             <li className="flex items-center justify-between">
                               <span>Klamydia Test</span>
-                              <span>99,00 kr.</span>
+                              <span>{service?.price.toFixed(2)} kr.</span>
                             </li>
 
                             <li className="flex items-center justify-between">
                               <span>Konsultation</span>
-                              <span>99,00 kr.</span>
+                              <span>{consultationFee.toFixed(2)} kr.</span>
                             </li>
 
                             <li className="flex items-center justify-between">
                               <span>Forsendelse</span>
-                              <span>25,00 kr.</span>
+                              <span>{shipmentFee.toFixed(2)} kr.</span>
                             </li>
                           </ul>
 
                           <div className="flex items-center justify-between font-bold text-lg mt-10">
                             <span>Total</span>
-                            <span>223,00 kr.</span>
+                            <span>
+                              {(
+                                service?.price +
+                                consultationFee +
+                                shipmentFee
+                              ).toFixed(2)}{" "}
+                              kr.
+                            </span>
                           </div>
                         </div>
                       </div>

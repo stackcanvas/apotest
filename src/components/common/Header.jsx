@@ -50,10 +50,10 @@ const Header = () => {
           <div className="header-right">
             {pathname?.includes("/orders/") ? (
               <>
-                <div className="flex items-center space-x-4">
+                <ALink href={"/"} className="flex items-center space-x-4">
                   <span>Fortryd bestilling</span>
                   <ShoppingCartOutlined className="text-2xl" />
-                </div>
+                </ALink>
               </>
             ) : (
               <>
