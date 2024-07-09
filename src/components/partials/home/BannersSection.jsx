@@ -27,7 +27,7 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <ALink href={"/orders/order-1"}>
+              <ALink href={"/orders/herpes-on-the-sexual-oragans"}>
                 <Button
                   size="large"
                   className="block bg-red-400 border-red-400 mb-4 w-full"
@@ -108,7 +108,7 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <ALink href={"/orders/order-3"}>
+              <ALink href={"/orders/genital-warts"}>
                 <Button
                   size="large"
                   className="block bg-[#0AB0D9] border-[#0AB0D9] mb-4 w-full"
@@ -148,7 +148,7 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <ALink href={"/orders/order-4"}>
+              <ALink href={"/orders/chlamydia"}>
                 <Button
                   size="large"
                   className="block bg-[#F3AE57] border-[#F3AE57] mb-4 w-full"
@@ -188,7 +188,7 @@ const BannersSection = () => {
                 vi en recept på medicin som du modtager med posten.
               </p>
 
-              <ALink href={"/orders/order-5"}>
+              <ALink href={"/orders/urinary-tract-infection"}>
                 <Button
                   size="large"
                   className="block bg-[#A7A7A5] border-[#A7A7A5] mb-4 w-full"

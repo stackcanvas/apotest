@@ -103,7 +103,7 @@ const OrderPage = () => {
   const handleOrderComplete = async () => {
     setLoading(true);
 
-    console.log(service, "service")
+    console.log(service, "service");
 
     if (!stripe || !elements) {
       return;
@@ -135,9 +135,9 @@ const OrderPage = () => {
               email: billingDetails.email,
             },
             Question: {
-              question1: question1 === 1 ? true: false,
+              question1: question1 === 1 ? true : false,
               question2: question2,
-              question3: question3 === 1 ? true: false,
+              question3: question3 === 1 ? true : false,
               confirm: confirm,
             },
           },
@@ -567,7 +567,7 @@ const OrderPage = () => {
                           service?.price +
                           consultationFee +
                           shipmentFee
-                        ).toFixed(2)}{" "}
+                        )?.toFixed(2)}{" "}
                         kr.
                       </h3>
                     </div>
@@ -581,17 +581,17 @@ const OrderPage = () => {
                         <ul className="text-lg">
                           <li className="flex items-center justify-between">
                             <span>Klamydia Test</span>
-                            <span>{service?.price.toFixed(2)} kr.</span>
+                            <span>{service?.price?.toFixed(2)} kr.</span>
                           </li>
 
                           <li className="flex items-center justify-between">
                             <span>Konsultation</span>
-                            <span>{consultationFee.toFixed(2)} kr.</span>
+                            <span>{consultationFee?.toFixed(2)} kr.</span>
                           </li>
 
                           <li className="flex items-center justify-between">
                             <span>Forsendelse</span>
-                            <span>{shipmentFee.toFixed(2)} kr.</span>
+                            <span>{shipmentFee?.toFixed(2)} kr.</span>
                           </li>
                         </ul>
 
@@ -602,7 +602,7 @@ const OrderPage = () => {
                               service?.price +
                               consultationFee +
                               shipmentFee
-                            ).toFixed(2)}{" "}
+                            )?.toFixed(2)}{" "}
                             kr.
                           </span>
                         </div>
@@ -664,7 +664,9 @@ const OrderPage = () => {
                           type="primary"
                           size="large"
                           className={`block w-[100px] ${
-                            question1 === 1 ? "bg-green-400 border-green-400" : ""
+                            question1 === 1
+                              ? "bg-green-400 border-green-400"
+                              : ""
                           }`}
                           onClick={() => setQuestion1(1)}
                         >
@@ -675,7 +677,9 @@ const OrderPage = () => {
                           type="primary"
                           size="large"
                           className={`block w-[100px] ${
-                            question1 === 0 ? "bg-green-400 border-green-400" : ""
+                            question1 === 0
+                              ? "bg-green-400 border-green-400"
+                              : ""
                           }`}
                           onClick={() => setQuestion1(0)}
                         >
@@ -795,7 +799,9 @@ const OrderPage = () => {
                         <Button
                           type="primary"
                           size="large"
-                          className={`block w-[100px] ${confirm ? "bg-green-400" : ""}`}
+                          className={`block w-[100px] ${
+                            confirm ? "bg-green-400" : ""
+                          }`}
                           onClick={() => setConfirm(!confirm)}
                         >
                           Bekræft
